@@ -14,5 +14,9 @@ fn main() {
     };
 
     let mut chip8 = chip8::new();
-    chip8.load_game(rom_bytes.as_slice())
+    chip8.load_game(rom_bytes.as_slice());
+
+    loop {
+        chip8.emulate_cycle();
+    }
 }
