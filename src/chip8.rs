@@ -29,5 +29,9 @@ pub struct Chip8 {
 }
 
 impl Chip8 {
-    
+    pub fn load_game(&mut self, rom_bytes: &[u8]) {
+        for (i, &byte) in rom_bytes.iter().enumerate() {
+            self.memory[i + 0x200] = byte;
+        }
+    }
 }
