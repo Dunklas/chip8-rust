@@ -38,11 +38,28 @@ impl Chip8 {
     pub fn emulate_cycle(&mut self) {
         let op_code = self.fetch_opcode();
         match op_code & 0xF000 {
+            0x0000 => {
+                match op_code & 0x000F {
+                    0x0000 => {
+                        println!("0x00E0: Clear screen");
+                        self.program_counter += 2;
+                    },
+                    0x000E => {
+                        println!("0x00EE: Return from subroutine");
+                        self.program_counter += 2;
+                    },
+                    _ => {
+                        println!("Unrecognized op code: {:X?}", op_code);
+                        return;
+                    }
+                }
+            },
             0x1000 => {
-                println!("Jump!")
+                println!("0x1NNN: Jumps to address NNN");
+                self.program_counter = op_code & 0x0FFF;
             },
             _ => {
-                println!("Unrecognized op code");
+                println!("Unrecognized op code: {:X?}", op_code);
                 return;
             }
         }
