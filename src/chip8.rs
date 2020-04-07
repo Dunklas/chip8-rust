@@ -101,6 +101,13 @@ impl Chip8 {
                         self.delay_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
                         self.program_counter += 2;
                     },
+                    0x0033 => {
+                        println!("0xFX33: Stores the binary-coded decimal representation of VX");
+                        self.memory[self.index as usize] = self.v[((op_code & 0x0F00) >> 8) as usize] / 100;
+                        self.memory[(self.index + 1) as usize] = (self.v[((op_code & 0x0F00) >> 8) as usize] / 10) % 10;
+                        self.memory[(self.index + 2) as usize] = (self.v[((op_code & 0x0F00) >> 8) as usize] % 100) % 10;
+                        self.program_counter += 2;
+                    }
                     _ => {
                         println!("Unrecognized op code: {:X?}", op_code);
                         return;
