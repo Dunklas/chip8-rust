@@ -62,7 +62,20 @@ impl Chip8 {
                 println!("0x6XNN: Sets VX to NN");
                 self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
                 self.program_counter += 2;
-            }
+            },
+            0xF000 => {
+                match op_code & 0x00FF {
+                    0x0015 => {
+                        println!("0xFX15: Sets the delay timer to VX.");
+                        self.delay_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
+                        self.program_counter += 2;
+                    },
+                    _ => {
+                        println!("Unrecognized op code: {:X?}", op_code);
+                        return;
+                    }
+                }
+            },
             _ => {
                 println!("Unrecognized op code: {:X?}", op_code);
                 return;
