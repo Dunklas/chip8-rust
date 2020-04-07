@@ -107,6 +107,11 @@ impl Chip8 {
                 self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
                 self.program_counter += 2;
             },
+            0x7000 => {
+                println!("0x7XNN: Adds NN to VX. (Carry flag is not changed)");
+                self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
+                self.program_counter += 2;
+            }
             0xA000 => {
                 println!("0xANNN: Sets I to the address NNN");
                 self.index = op_code & 0x0FFF;
