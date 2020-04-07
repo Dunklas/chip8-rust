@@ -58,6 +58,11 @@ impl Chip8 {
                 println!("0x1NNN: Jumps to address NNN");
                 self.program_counter = op_code & 0x0FFF;
             },
+            0x6000 => {
+                println!("0x6XNN: Sets VX to NN");
+                self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
+                self.program_counter += 2;
+            }
             _ => {
                 println!("Unrecognized op code: {:X?}", op_code);
                 return;
