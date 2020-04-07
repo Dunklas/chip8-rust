@@ -83,6 +83,11 @@ impl Chip8 {
                 println!("0xANNN: Sets I to the address NNN");
                 self.index = op_code & 0x0FFF;
                 self.program_counter += 2;
+            },
+            0xD000 => {
+                println!("0xDXYN: Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels");
+                // TODO: IMPLEMENT GRAPHICS!
+                self.program_counter += 2;
             }
             0xF000 => {
                 match op_code & 0x00FF {
