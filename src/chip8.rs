@@ -58,6 +58,12 @@ impl Chip8 {
                 println!("0x1NNN: Jumps to address NNN");
                 self.program_counter = op_code & 0x0FFF;
             },
+            0x2000 => {
+                println!("0x2NNN: Calls subroutine at NNN");
+                self.stack[self.stack_pointer as usize] = self.program_counter;
+                self.stack_pointer += 1;
+                self.program_counter = op_code & 0x0FFF;
+            }
             0x6000 => {
                 println!("0x6XNN: Sets VX to NN");
                 self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
