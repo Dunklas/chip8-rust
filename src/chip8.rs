@@ -1,5 +1,5 @@
 pub fn new() -> Chip8 {
-    Chip8 {
+    let mut chip8 = Chip8 {
         op_code: 0,
         memory: [0; 4096],
         v: [0; 16],
@@ -11,7 +11,35 @@ pub fn new() -> Chip8 {
         stack: [0; 16],
         stack_pointer: 0,
         key: [0; 16]
+    };
+
+    let font_set = font_set();
+    for (i, byte) in font_set.iter().enumerate() {
+        chip8.memory[i] = font_set[i];
     }
+
+    return chip8;
+}
+
+fn font_set() -> [u8; 80] {
+    [
+        0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+        0x20, 0x60, 0x20, 0x20, 0x70, // 1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+        0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+        0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+        0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+        0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+        0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+    ]
 }
 
 pub struct Chip8 {
@@ -101,6 +129,12 @@ impl Chip8 {
                         self.delay_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
                         self.program_counter += 2;
                     },
+                    0x0029 => {
+                        println!("0xFX29: Sets I to the location of the sprite for the character in VX");
+                        let character = self.v[((op_code & 0x0F00) >> 8) as usize];
+                        self.index = (character * 5).into(); // Each char takes 5 bytes
+                        self.program_counter += 2;
+                    },
                     0x0033 => {
                         println!("0xFX33: Stores the binary-coded decimal representation of VX");
                         self.memory[self.index as usize] = self.v[((op_code & 0x0F00) >> 8) as usize] / 100;
@@ -109,7 +143,7 @@ impl Chip8 {
                         self.program_counter += 2;
                     },
                     0x0065 => {
-                        println!("0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I.");
+                        println!("0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I");
                         let mut offset = self.index;
                         for i in 0x0..0xF {
                             self.v[i as usize] = self.memory[offset as usize];
@@ -150,3 +184,4 @@ impl Chip8 {
         }
     }
 }
+
