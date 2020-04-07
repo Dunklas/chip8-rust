@@ -71,8 +71,13 @@ impl Chip8 {
             },
             0xF000 => {
                 match op_code & 0x00FF {
+                    0x0007 => {
+                        println!("0xFX07: Sets VX to the value of the delay timer");
+                        self.v[((op_code & 0x0F00) >> 8) as usize] = self.delay_timer;
+                        self.program_counter += 2;
+                    }
                     0x0015 => {
-                        println!("0xFX15: Sets the delay timer to VX.");
+                        println!("0xFX15: Sets the delay timer to VX");
                         self.delay_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
                         self.program_counter += 2;
                     },
