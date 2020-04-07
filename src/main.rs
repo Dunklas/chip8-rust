@@ -31,5 +31,22 @@ fn main() {
 
     loop {
         chip8.emulate_cycle();
+        if chip8.draw {
+            draw(chip8.gfx);
+        }
     }
+}
+
+fn draw(gfx: [u8; 62 * 32]) {
+    // print!("{}[2J", 27 as char);
+    // for y in 0..32 {
+    //     for x in 0..64 {
+    //         if gfx[y + x] == 1 {
+    //             print!("#")
+    //         } else {
+    //             print!(" ")
+    //         }
+    //     }
+    //     print!("\n")
+    // }
 }
