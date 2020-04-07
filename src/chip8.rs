@@ -37,6 +37,7 @@ impl Chip8 {
 
     pub fn emulate_cycle(&mut self) {
         let op_code = self.fetch_opcode();
+        println!("OP: {:X?}", op_code);
         match op_code & 0xF000 {
             0x0000 => {
                 match op_code & 0x000F {
@@ -64,6 +65,14 @@ impl Chip8 {
                 self.stack[self.stack_pointer as usize] = self.program_counter;
                 self.stack_pointer += 1;
                 self.program_counter = op_code & 0x0FFF;
+            },
+            0x3000 => {
+                println!("0x3XNN: Skips the next instruction if VX equals NN. (Usually the next instruction is a jump to skip a code block)");
+                if self.v[((op_code & 0x0F00) >> 8) as usize] == (op_code & 0x00FF) as u8 {
+                    self.program_counter += 4;
+                } else {
+                    self.program_counter += 2;
+                }
             }
             0x6000 => {
                 println!("0x6XNN: Sets VX to NN");
@@ -99,7 +108,6 @@ impl Chip8 {
         let first_byte = self.memory[self.program_counter as usize];
         let second_byte = self.memory[self.program_counter as usize + 1];
         let op_code: u16 = (first_byte as u16) << 8 | second_byte as u16;
-        // println!("First byte: {:#018b}. Second byte: {:#018b}. Op code: {:#018b}", first_byte, second_byte, op_code);
         return op_code;
     }
 }
