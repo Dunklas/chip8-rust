@@ -107,6 +107,15 @@ impl Chip8 {
                         self.memory[(self.index + 1) as usize] = (self.v[((op_code & 0x0F00) >> 8) as usize] / 10) % 10;
                         self.memory[(self.index + 2) as usize] = (self.v[((op_code & 0x0F00) >> 8) as usize] % 100) % 10;
                         self.program_counter += 2;
+                    },
+                    0x0065 => {
+                        println!("0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I.");
+                        let mut offset = self.index;
+                        for i in 0x0..0xF {
+                            self.v[i as usize] = self.memory[offset as usize];
+                            offset += 1;
+                        }
+                        self.program_counter += 2;
                     }
                     _ => {
                         println!("Unrecognized op code: {:X?}", op_code);
@@ -133,8 +142,8 @@ impl Chip8 {
         if self.delay_timer > 0 {
             self.delay_timer -= 1;
         }
-        if (self.sound_timer > 0) {
-            if (self.sound_timer == 1) {
+        if self.sound_timer > 0 {
+            if self.sound_timer == 1 {
                 println!("BEEP");
             }
             self.sound_timer -= 1;

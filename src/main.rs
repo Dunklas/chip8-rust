@@ -20,7 +20,7 @@ fn main() {
     if debug {
         let mut index = 0;
         let rom_bytes_slice = rom_bytes.as_slice();
-        while (index < rom_bytes_slice.len() - 1) {
+        while index < rom_bytes_slice.len() - 1 {
             let first_byte = rom_bytes_slice[index];
             let second_byte = rom_bytes_slice[index + 1];
             let op_code: u16 = (first_byte as u16) << 8 | second_byte as u16;
