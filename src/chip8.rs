@@ -46,7 +46,8 @@ impl Chip8 {
                     },
                     0x000E => {
                         println!("0x00EE: Return from subroutine");
-                        self.program_counter += 2;
+                        self.program_counter = self.stack[(self.stack_pointer - 1) as usize];
+                        self.stack_pointer -= 1;
                     },
                     _ => {
                         println!("Unrecognized op code: {:X?}", op_code);
