@@ -47,8 +47,8 @@ impl Chip8 {
                     },
                     0x000E => {
                         println!("0x00EE: Return from subroutine");
-                        self.program_counter = self.stack[(self.stack_pointer - 1) as usize];
                         self.stack_pointer -= 1;
+                        self.program_counter = self.stack[self.stack_pointer as usize];
                     },
                     _ => {
                         println!("Unrecognized op code: {:X?}", op_code);
@@ -112,6 +112,7 @@ impl Chip8 {
                 return;
             }
         }
+        self.update_timers();
     }
 
     fn fetch_opcode(&mut self) -> u16 {
@@ -119,5 +120,17 @@ impl Chip8 {
         let second_byte = self.memory[self.program_counter as usize + 1];
         let op_code: u16 = (first_byte as u16) << 8 | second_byte as u16;
         return op_code;
+    }
+
+    fn update_timers(&mut self) {
+        if self.delay_timer > 0 {
+            self.delay_timer -= 1;
+        }
+        if (self.sound_timer > 0) {
+            if (self.sound_timer == 1) {
+                println!("BEEP");
+            }
+            self.sound_timer -= 1;
+        }
     }
 }
