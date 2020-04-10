@@ -104,6 +104,14 @@ impl Chip8 {
                 } else {
                     self.program_counter += 2;
                 }
+            },
+            0x4000 => {
+                Chip8::print_debug(&format!("0x4XNN: Skips the next instruction if VX doesn't equal NN"));
+                if self.v[((op_code & 0x0F00) >> 8) as usize] != (op_code & 0x00FF) as u8 {
+                    self.program_counter += 4;
+                } else {
+                    self.program_counter += 2;
+                }
             }
             0x6000 => {
                 Chip8::print_debug(&format!("0x6XNN: Sets VX to NN"));
