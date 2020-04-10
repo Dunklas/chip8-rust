@@ -112,6 +112,14 @@ impl Chip8 {
                 } else {
                     self.program_counter += 2;
                 }
+            },
+            0x5000 => {
+                Chip8::print_debug(&format!("0x5XY0: Skips the next instruction if VX equals VY"));
+                if self.v[((op_code & 0x0F00) >> 8) as usize] == self.v[((op_code & 0x00F0) >> 4) as usize] {
+                    self.program_counter += 4;
+                } else {
+                    self.program_counter += 2;
+                }
             }
             0x6000 => {
                 Chip8::print_debug(&format!("0x6XNN: Sets VX to NN"));
