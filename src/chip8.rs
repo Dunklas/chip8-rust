@@ -5,7 +5,7 @@ pub fn new(rom_bytes: &[u8]) -> Chip8 {
         v: [0; 16],
         index: 0,
         program_counter: 0x200,
-        gfx: [0; 62 * 32],
+        gfx: [0; 64 * 32],
         delay_timer: 0,
         sound_timer: 0,
         stack: [0; 16],
@@ -53,7 +53,7 @@ pub struct Chip8 {
     v: [u8; 16],
     index: u16,
     program_counter: u16,
-    pub gfx: [u8; 62 * 32],
+    pub gfx: [u8; 64 * 32],
     delay_timer: u8,
     sound_timer: u8,
     stack: [u16; 16],
@@ -74,7 +74,7 @@ impl Chip8 {
                 match op_code & 0x000F {
                     0x0000 => {
                         Chip8::print_debug(&format!("0x00E0: Clear screen"));
-                        self.gfx = [0; 62 * 32];
+                        self.gfx = [0; 64 * 32];
                         self.draw = true;
                         self.program_counter += 2;
                     },
@@ -185,9 +185,9 @@ impl Chip8 {
 
                 self.v[0xF] = 0;
                 for y_line in 0..height {
-                    let pixel = self.memory[(self.index + y_line) as usize] as u8;
+                    let pixel = self.memory[(self.index + y_line) as usize];
                     for x_line in 0..8 {
-                        if pixel & (0x80 >> x_line) != 0 {
+                        if (pixel & (0x80 >> x_line)) != 0 {
                             if self.gfx[(x + x_line + ((y + y_line) * 64)) as usize] == 1 {
                                 self.v[0xF] = 1;
                             }
@@ -237,7 +237,7 @@ impl Chip8 {
                     },
                     0x001E => {
                         Chip8::print_debug(&format!("0xFX1E: Adds VX to I. VF is set to 1 when there is a range overflow (I+VX>0xFFF), and to 0 when there isn't"));
-                        if self.v[((op_code & 0x0F00) >> 8) as usize] as u16 > (0xFFF - self.index) {
+                        if (self.index + (self.v[((op_code & 0x0F00) >> 8) as usize] as u16)) > 0xFFF {
                             self.v[0xF] = 1;
                         } else {
                             self.v[0xF] = 0;
@@ -260,11 +260,11 @@ impl Chip8 {
                     },
                     0x0065 => {
                         Chip8::print_debug(&format!("0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I"));
-                        let mut offset = self.index;
-                        for i in 0x0..0xF {
-                            self.v[i as usize] = self.memory[offset as usize];
-                            offset += 1;
+                        for i in 0x0..(((op_code & 0x0F00) >> 8) + 1) {
+                            self.v[i as usize] = self.memory[(self.index + i) as usize];
                         }
+                        // Only on original interpreter
+                        self.index += ((op_code & 0x0F00) >> 8) + 1;
                         self.program_counter += 2;
                     }
                     _ => {
@@ -300,7 +300,7 @@ impl Chip8 {
     }
 
     fn print_debug(msg: &String) {
-        let debug = true;
+        let debug = false;
         if debug {
             println!("{}", msg);
         }
