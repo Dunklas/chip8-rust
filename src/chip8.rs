@@ -74,7 +74,7 @@ impl Chip8 {
         self.draw = false;
         self.fetch_opcode();
         let op_code = self.op_code;
-        Chip8::print_debug(&format!("OP: {:X?}", self.op_code));
+        Chip8::print_debug(&format!("OP: {:#06x}", self.op_code));
         match self.op_code & 0xF000 {
             0x0000 => {
                 match op_code & 0x000F {
@@ -188,6 +188,18 @@ impl Chip8 {
                         self.v[((op_code & 0x0F00) >> 8) as usize] = (vx - vy).0;
                         self.program_counter += 2;
                     },
+                    0x0007 => {
+                        Chip8::print_debug(&format!("0x8XY7: Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't"));
+                        if self.v[((op_code & 0x00F0) >> 4) as usize] < self.v[((op_code & 0x0F00) >> 8) as usize] {
+                            self.v[0xF] = 0;
+                        } else {
+                            self.v[0xF] = 1;
+                        }
+                        let vy = Wrapping(self.v[((op_code & 0x00F0) >> 4) as usize]);
+                        let vx = Wrapping(self.v[((op_code & 0x0F00) >> 8) as usize]);
+                        self.v[((op_code & 0x0F00) >> 8) as usize] = (vy - vx).0;
+                        self.program_counter += 2;
+                    }
                     0x000E => {
                         Chip8::print_debug(&format!("0x8XYE: Stores the most significant bit of VX in VF and then shifts VX to the left by 1"));
                         let most_significant = 1 << 7;
