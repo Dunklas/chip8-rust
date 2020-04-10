@@ -201,8 +201,7 @@ impl Chip8 {
                     }
                     0x000E => {
                         Chip8::print_debug(&format!("0x8XYE: Stores the most significant bit of VX in VF and then shifts VX to the left by 1"));
-                        let most_significant = 1 << 7;
-                        self.v[0xF] = self.v[((op_code & 0x0F00) >> 8) as usize] & most_significant;
+                        self.v[0xF] = self.v[((op_code & 0x0F00) >> 8) as usize] >> 7;
                         self.v[((op_code & 0x0F00) >> 8) as usize] <<= 1;
                         self.program_counter += 2;
                     }
