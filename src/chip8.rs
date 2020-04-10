@@ -211,6 +211,10 @@ impl Chip8 {
                 self.index = op_code & 0x0FFF;
                 self.program_counter += 2;
             },
+            0xB000 => {
+                Chip8::print_debug(&format!("0xBNNN: Jumps to the address NNN plus V0"));
+                self.program_counter = ((self.v[0x0] as u16) + (op_code & 0x0FFF));
+            }
             0xC000 => {
                 Chip8::print_debug(&format!("0xCXNN: Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN"));
                 use rand::Rng;
