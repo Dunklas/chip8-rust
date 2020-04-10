@@ -18,6 +18,10 @@ pub fn new(rom_bytes: &[u8]) -> Chip8 {
 
     let font_set = font_set();
     for (i, _byte) in font_set.iter().enumerate() {
+        // if i % 5 == 0 {
+        //     print!("\n");
+        // }
+        // println!("{:#010b}", font_set[i]);
         chip8.memory[i] = font_set[i];
     }
 
