@@ -20,10 +20,26 @@ struct Game {
 
 impl Game {
     fn render(&mut self, args: &RenderArgs) {
-        const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
+        use graphics::*;
+        const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+        const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+        const PIXEL_SIZE: f64 = 8.0;
+
         if self.chip8.draw {
+            let gfx = self.chip8.gfx;
             self.gl.draw(args.viewport(), |c, gl| {
-              graphics::clear(GREEN, gl)
+              clear(BLACK, gl);
+              for y in 0..32 {
+                  for x in 0..64 {
+                      if gfx[y + x] == 1 {
+                          let rect = rectangle::square(0.0, 0.0, PIXEL_SIZE);
+                          let transform = c
+                            .transform
+                            .trans(x as f64 * PIXEL_SIZE, y as f64 * PIXEL_SIZE);
+                          rectangle(WHITE, rect, transform, gl);
+                      }
+                  }
+              }
             });
         }
     }
@@ -46,7 +62,7 @@ fn main() {
     let chip8 = chip8::new(rom_bytes.as_slice());
 
     let opengl = OpenGL::V3_2;
-    let mut window: Window = WindowSettings::new("chip8", [256, 128])
+    let mut window: Window = WindowSettings::new("chip8", [512, 256])
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
