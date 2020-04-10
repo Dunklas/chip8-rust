@@ -130,6 +130,14 @@ impl Chip8 {
                 Chip8::print_debug(&format!("0x7XNN: Adds NN to VX. (Carry flag is not changed)"));
                 self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
                 self.program_counter += 2;
+            },
+            0x9000 => {
+                Chip8::print_debug(&format!("0x9XY0: Skips the next instruction if VX doesn't equal VY"));
+                if self.v[((op_code & 0x0F00) >> 8) as usize] != self.v[((op_code & 0x00F0) >> 4) as usize] {
+                    self.program_counter += 4;
+                } else {
+                    self.program_counter += 2;
+                }
             }
             0xA000 => {
                 Chip8::print_debug(&format!("0xANNN: Sets I to the address NNN"));
