@@ -181,6 +181,16 @@ impl Chip8 {
                         self.delay_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
                         self.program_counter += 2;
                     },
+                    0x001E => {
+                        Chip8::print_debug(&format!("0xFX1E: Adds VX to I. VF is set to 1 when there is a range overflow (I+VX>0xFFF), and to 0 when there isn't"));
+                        if self.v[((op_code & 0x0F00) >> 8) as usize] as u16 > (0xFFF - self.index) {
+                            self.v[0xF] = 1;
+                        } else {
+                            self.v[0xF] = 0;
+                        }
+                        self.index += self.v[((op_code & 0x0F00) >> 8) as usize] as u16;
+                        self.program_counter += 2;
+                    }
                     0x0029 => {
                         Chip8::print_debug(&format!("0xFX29: Sets I to the location of the sprite for the character in VX"));
                         let character = self.v[((op_code & 0x0F00) >> 8) as usize];
