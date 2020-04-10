@@ -187,6 +187,12 @@ impl Chip8 {
                         self.v[((op_code & 0x0F00) >> 8) as usize] = (vx - vy).0;
                         self.program_counter += 2;
                     },
+                    0x0006 => {
+                        Chip8::print_debug(&format!("0x8XY6: Stores the least significant bit of VX in VF and then shifts VX to the right by 1"));
+                        self.v[0xF] = self.v[((op_code & 0x0F00) >> 8) as usize] & 0x1;
+                        self.v[((op_code & 0x0F00) >> 8) as usize] >>= 1;
+                        self.program_counter += 2;
+                    }
                     0x0007 => {
                         Chip8::print_debug(&format!("0x8XY7: Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't"));
                         if self.v[((op_code & 0x00F0) >> 4) as usize] < self.v[((op_code & 0x0F00) >> 8) as usize] {
