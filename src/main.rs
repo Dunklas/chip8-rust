@@ -24,7 +24,7 @@ impl Game {
         use graphics::*;
         const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
         const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
-        const PIXEL_SIZE: f64 = 8.0;
+        const PIXEL_SIZE: f64 = 16.0;
 
         if self.chip8.draw {
             self.chip8.draw = false;
@@ -64,7 +64,7 @@ fn main() {
     let chip8 = chip8::new(rom_bytes.as_slice());
 
     let opengl = OpenGL::V3_2;
-    let mut window: Window = WindowSettings::new("chip8", [512, 256])
+    let mut window: Window = WindowSettings::new("chip8", [1024, 512])
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
