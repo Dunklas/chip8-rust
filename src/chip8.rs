@@ -75,12 +75,14 @@ impl Chip8 {
                     0x0000 => {
                         Chip8::print_debug(&format!("0x00E0: Clear screen"));
                         self.gfx = [0; 62 * 32];
+                        self.draw = true;
                         self.program_counter += 2;
                     },
                     0x000E => {
                         Chip8::print_debug(&format!("0x00EE: Return from subroutine"));
                         self.stack_pointer -= 1;
                         self.program_counter = self.stack[self.stack_pointer as usize];
+                        self.program_counter += 2;
                     },
                     _ => {
                         Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
