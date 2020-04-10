@@ -134,6 +134,19 @@ impl Chip8 {
                 self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
                 self.program_counter += 2;
             },
+            0x8000 => {
+                match op_code & 0x000F {
+                    0x0000 => {
+                        Chip8::print_debug(&format!("0x8XY0: Sets VX to the value of VY"));
+                        self.v[((op_code & 0x0F00) >> 8) as usize] = self.v[((op_code & 0x00F0) >> 4) as usize];
+                        self.program_counter += 2;
+                    },
+                    _ => {
+                        Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
+                        return;
+                    }
+                }
+            }
             0x9000 => {
                 Chip8::print_debug(&format!("0x9XY0: Skips the next instruction if VX doesn't equal VY"));
                 if self.v[((op_code & 0x0F00) >> 8) as usize] != self.v[((op_code & 0x00F0) >> 4) as usize] {
