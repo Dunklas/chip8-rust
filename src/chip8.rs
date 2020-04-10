@@ -66,14 +66,15 @@ impl Chip8 {
 
     pub fn emulate_cycle(&mut self) {
         self.draw = false;
-        let op_code = self.fetch_opcode();
-        Chip8::print_debug(&format!("OP: {:X?}", op_code));
-        match op_code & 0xF000 {
+        self.fetch_opcode();
+        let op_code = self.op_code;
+        Chip8::print_debug(&format!("OP: {:X?}", self.op_code));
+        match self.op_code & 0xF000 {
             0x0000 => {
                 match op_code & 0x000F {
                     0x0000 => {
                         Chip8::print_debug(&format!("0x00E0: Clear screen"));
-                        // TODO: IMPLEMENT!
+                        self.gfx = [0; 62 * 32];
                         self.program_counter += 2;
                     },
                     0x000E => {
@@ -214,11 +215,10 @@ impl Chip8 {
         self.update_timers();
     }
 
-    fn fetch_opcode(&mut self) -> u16 {
+    fn fetch_opcode(&mut self) {
         let first_byte = self.memory[self.program_counter as usize];
         let second_byte = self.memory[self.program_counter as usize + 1];
-        let op_code: u16 = (first_byte as u16) << 8 | second_byte as u16;
-        return op_code;
+        self.op_code = (first_byte as u16) << 8 | second_byte as u16;
     }
 
     fn update_timers(&mut self) {
