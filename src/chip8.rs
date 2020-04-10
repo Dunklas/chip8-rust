@@ -188,6 +188,30 @@ impl Chip8 {
 
                 self.draw = true;
                 self.program_counter += 2;
+            },
+            0xE000 => {
+                match op_code & 0x00FF {
+                    0x009E => {
+                        Chip8::print_debug(&format!("0xEX9E: Skips the next instruction if the key stored in VX is pressed"));
+                        if self.key[self.v[((op_code & 0x0F00) >> 8) as usize] as usize] != 0 {
+                            self.program_counter += 4;
+                        } else {
+                            self.program_counter += 2;
+                        }
+                    },
+                    0x00A1 => {
+                        Chip8::print_debug(&format!("0xEXA1: Skips the next instruction if the key stored in VX isn't pressed"));
+                        if self.key[self.v[((op_code & 0x0F00) >> 8) as usize] as usize] == 0 {
+                            self.program_counter += 4;
+                        } else {
+                            self.program_counter += 2;
+                        }
+                    },
+                    _ => {
+                        Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
+                        return;
+                    }
+                }
             }
             0xF000 => {
                 match op_code & 0x00FF {
