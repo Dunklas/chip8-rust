@@ -134,7 +134,9 @@ impl Chip8 {
             },
             0x7000 => {
                 Chip8::print_debug(&format!("0x7XNN: Adds NN to VX. (Carry flag is not changed)"));
-                self.v[((op_code & 0x0F00) >> 8) as usize] = (op_code & 0x00FF) as u8;
+                let vx = Wrapping(self.v[((op_code & 0x0F00) >> 8) as usize]);
+                let nn = Wrapping((op_code & 0x00FF) as u8);
+                self.v[((op_code & 0x0F00) >> 8) as usize] = (vx + nn).0;
                 self.program_counter += 2;
             },
             0x8000 => {
