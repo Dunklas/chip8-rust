@@ -1,3 +1,5 @@
+use std::num::Wrapping;
+
 pub fn new(rom_bytes: &[u8]) -> Chip8 {
     let mut chip8 = Chip8 {
         op_code: 0,
@@ -150,6 +152,23 @@ impl Chip8 {
                         Chip8::print_debug(&format!("0x8XY2: Sets VX to VX and VY. (Bitwise AND operation)"));
                         self.v[((op_code & 0x0F00) >> 8) as usize] = self.v[((op_code & 0x0F00) >> 8) as usize] & self.v[((op_code & 0x00F0) >> 4) as usize];
                         self.program_counter += 2;
+                    },
+                    0x0003 => {
+                        Chip8::print_debug(&format!("0x8XY3: Sets VX to VX xor VY"));
+                        self.v[((op_code & 0x0F00) >> 8) as usize] = self.v[((op_code & 0x0F00) >> 8) as usize] ^ self.v[((op_code & 0x00F0) >> 4) as usize];
+                        self.program_counter += 2;
+                    },
+                    0x0004 => {
+                        Chip8::print_debug(&format!("0x8XY4: Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't"));
+                        if self.v[((op_code & 0x00F0) >> 4) as usize] > (0xFF - self.v[((op_code & 0x0F00) >> 8) as usize]) {
+                            self.v[0xF] = 1;
+                        } else {
+                            self.v[0xF] = 0;
+                        }
+                        let vx = Wrapping(self.v[((op_code & 0x0F00) >> 8) as usize]);
+                        let vy = Wrapping(self.v[((op_code & 0x00F0) >> 4) as usize]);
+                        self.v[((op_code & 0x0F00) >> 8) as usize] = (vx + vy).0;
+                        self.program_counter += 2;
                     }
                     _ => {
                         Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
@@ -300,7 +319,7 @@ impl Chip8 {
     }
 
     fn print_debug(msg: &String) {
-        let debug = false;
+        let debug = true;
         if debug {
             println!("{}", msg);
         }
