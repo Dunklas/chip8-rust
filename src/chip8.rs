@@ -1,4 +1,4 @@
-pub fn new() -> Chip8 {
+pub fn new(rom_bytes: &[u8]) -> Chip8 {
     let mut chip8 = Chip8 {
         op_code: 0,
         memory: [0; 4096],
@@ -17,6 +17,10 @@ pub fn new() -> Chip8 {
     let font_set = font_set();
     for (i, _byte) in font_set.iter().enumerate() {
         chip8.memory[i] = font_set[i];
+    }
+
+    for (i, &byte) in rom_bytes.iter().enumerate() {
+        chip8.memory[i + 0x200] = byte;
     }
 
     return chip8;
@@ -59,11 +63,6 @@ pub struct Chip8 {
 }
 
 impl Chip8 {
-    pub fn load_game(&mut self, rom_bytes: &[u8]) {
-        for (i, &byte) in rom_bytes.iter().enumerate() {
-            self.memory[i + 0x200] = byte;
-        }
-    }
 
     pub fn emulate_cycle(&mut self) {
         self.draw = false;
