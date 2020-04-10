@@ -327,13 +327,22 @@ impl Chip8 {
                         self.memory[(self.index + 2) as usize] = (self.v[((op_code & 0x0F00) >> 8) as usize] % 100) % 10;
                         self.program_counter += 2;
                     },
+                    0x0055 => {
+                        Chip8::print_debug(&format!("0xFX55: Stores V0 to VX (including VX) in memory starting at address I"));
+                        for i in 0x0..(((op_code & 0x0F00) >> 8) + 1) {
+                            self.memory[(self.index + i) as usize] = self.v[i as usize];
+                        }
+                        // Only on original interpreter
+                        // self.index += ((op_code & 0x0F00) >> 8) + 1;
+                        self.program_counter += 2;
+                    }
                     0x0065 => {
                         Chip8::print_debug(&format!("0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I"));
                         for i in 0x0..(((op_code & 0x0F00) >> 8) + 1) {
                             self.v[i as usize] = self.memory[(self.index + i) as usize];
                         }
                         // Only on original interpreter
-                        self.index += ((op_code & 0x0F00) >> 8) + 1;
+                        // self.index += ((op_code & 0x0F00) >> 8) + 1;
                         self.program_counter += 2;
                     }
                     _ => {
