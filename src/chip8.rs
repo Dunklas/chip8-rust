@@ -160,6 +160,13 @@ impl Chip8 {
                 self.index = op_code & 0x0FFF;
                 self.program_counter += 2;
             },
+            0xC000 => {
+                Chip8::print_debug(&format!("0xCXNN: Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN"));
+                use rand::Rng;
+                let mut rng = rand::thread_rng();
+                self.v[((op_code & 0x0F00) >> 8) as usize] = rng.gen::<u8>() & ((op_code & 0x00FF) as u8);
+                self.program_counter += 2;
+            }
             0xD000 => {
                 Chip8::print_debug(&format!("0xDXYN: Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels"));
                 let x = self.v[((op_code & 0x0F00) >> 8) as usize] as u16;

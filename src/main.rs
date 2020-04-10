@@ -2,6 +2,7 @@ mod chip8;
 use std::env;
 use std::fs;
 
+extern crate rand;
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
