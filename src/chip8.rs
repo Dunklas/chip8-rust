@@ -141,6 +141,11 @@ impl Chip8 {
                         self.v[((op_code & 0x0F00) >> 8) as usize] = self.v[((op_code & 0x00F0) >> 4) as usize];
                         self.program_counter += 2;
                     },
+                    0x002 => {
+                        Chip8::print_debug(&format!("0x8XY2: Sets VX to VX and VY. (Bitwise AND operation)"));
+                        self.v[((op_code & 0x0F00) >> 8) as usize] = self.v[((op_code & 0x0F00) >> 8) as usize] & self.v[((op_code & 0x00F0) >> 4) as usize];
+                        self.program_counter += 2;
+                    }
                     _ => {
                         Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
                         return;
