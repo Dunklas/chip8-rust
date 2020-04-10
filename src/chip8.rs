@@ -292,6 +292,11 @@ impl Chip8 {
                         }
                         self.index += self.v[((op_code & 0x0F00) >> 8) as usize] as u16;
                         self.program_counter += 2;
+                    },
+                    0x0018 => {
+                        Chip8::print_debug(&format!("0xFX18: Sets the sound timer to VX"));
+                        self.sound_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
+                        self.program_counter += 2;
                     }
                     0x0029 => {
                         Chip8::print_debug(&format!("0xFX29: Sets I to the location of the sprite for the character in VX"));
