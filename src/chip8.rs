@@ -71,7 +71,6 @@ pub struct Chip8 {
 impl Chip8 {
 
     pub fn emulate_cycle(&mut self) {
-        self.draw = false;
         self.fetch_opcode();
         let op_code = self.op_code;
         Chip8::print_debug(&format!("OP: {:#06x}", self.op_code));
@@ -205,7 +204,7 @@ impl Chip8 {
                         let most_significant = 1 << 7;
                         self.v[0xF] = self.v[((op_code & 0x0F00) >> 8) as usize] & most_significant;
                         self.v[((op_code & 0x0F00) >> 8) as usize] <<= 1;
-                        self.program_counter += 1;
+                        self.program_counter += 2;
                     }
                     _ => {
                         Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));

@@ -27,12 +27,13 @@ impl Game {
         const PIXEL_SIZE: f64 = 8.0;
 
         if self.chip8.draw {
+            self.chip8.draw = false;
             let gfx = self.chip8.gfx;
             self.gl.draw(args.viewport(), |c, gl| {
               clear(BLACK, gl);
               for y in 0..32 {
                   for x in 0..64 {
-                      if gfx[y + x] == 1 {
+                      if gfx[(y * 64) + x] == 1 {
                           let rect = rectangle::square(0.0, 0.0, PIXEL_SIZE);
                           let transform = c
                             .transform
