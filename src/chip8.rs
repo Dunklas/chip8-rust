@@ -73,21 +73,22 @@ impl Chip8 {
         Chip8::print_debug(&format!("OP: {:X?}", self.op_code));
         match self.op_code & 0xF000 {
             0x0000 => {
-                match op_code & 0x000F {
-                    0x0000 => {
+                match op_code & 0x00FF {
+                    0x00E0 => {
                         Chip8::print_debug(&format!("0x00E0: Clear screen"));
                         self.gfx = [0; 64 * 32];
                         self.draw = true;
                         self.program_counter += 2;
                     },
-                    0x000E => {
+                    0x00EE => {
                         Chip8::print_debug(&format!("0x00EE: Return from subroutine"));
                         self.stack_pointer -= 1;
                         self.program_counter = self.stack[self.stack_pointer as usize];
                         self.program_counter += 2;
                     },
                     _ => {
-                        Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
+                        Chip8::print_debug(&format!("0x0NNN: Calls RCA 1802 program at address NNN. Not necessary for most ROMs."));
+                        self.program_counter += 2;
                         return;
                     }
                 }
