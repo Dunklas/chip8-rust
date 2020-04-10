@@ -181,6 +181,13 @@ impl Chip8 {
                         let vy = Wrapping(self.v[((op_code & 0x00F0) >> 4) as usize]);
                         self.v[((op_code & 0x0F00) >> 8) as usize] = (vx - vy).0;
                         self.program_counter += 2;
+                    },
+                    0x000E => {
+                        Chip8::print_debug(&format!("0x8XYE: Stores the most significant bit of VX in VF and then shifts VX to the left by 1"));
+                        let most_significant = 1 << 7;
+                        self.v[0xF] = self.v[((op_code & 0x0F00) >> 8) as usize] & most_significant;
+                        self.v[((op_code & 0x0F00) >> 8) as usize] <<= 1;
+                        self.program_counter += 1;
                     }
                     _ => {
                         Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
