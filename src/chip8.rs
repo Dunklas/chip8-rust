@@ -232,10 +232,10 @@ impl Chip8 {
                     let pixel = self.memory[(self.index + y_line) as usize];
                     for x_line in 0..8 {
                         if (pixel & (0x80 >> x_line)) != 0 {
-                            if self.gfx[(x + x_line + ((y + y_line) * 64)) as usize] == 1 {
+                            if self.gfx[((x + x_line + ((y + y_line) * 64)) % (64 * 32)) as usize] == 1 {
                                 self.v[0xF] = 1;
                             }
-                            self.gfx[(x + x_line + ((y + y_line) * 64)) as usize] ^= 1;
+                            self.gfx[((x + x_line + ((y + y_line) * 64)) % (64 * 32)) as usize] ^= 1;
                         }
                     }
                 }
