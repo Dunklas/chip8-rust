@@ -169,6 +169,18 @@ impl Chip8 {
                         let vy = Wrapping(self.v[((op_code & 0x00F0) >> 4) as usize]);
                         self.v[((op_code & 0x0F00) >> 8) as usize] = (vx + vy).0;
                         self.program_counter += 2;
+                    },
+                    0x0005 => {
+                        Chip8::print_debug(&format!("0x8XY5: VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't"));
+                        if self.v[((op_code & 0x0F00) >> 8) as usize] < self.v[((op_code & 0x00F0) >> 4) as usize] {
+                            self.v[0xF] = 0;
+                        } else {
+                            self.v[0xF] = 1;
+                        }
+                        let vx = Wrapping(self.v[((op_code & 0x0F00) >> 8) as usize]);
+                        let vy = Wrapping(self.v[((op_code & 0x00F0) >> 4) as usize]);
+                        self.v[((op_code & 0x0F00) >> 8) as usize] = (vx - vy).0;
+                        self.program_counter += 2;
                     }
                     _ => {
                         Chip8::print_debug(&format!("Unrecognized op code: {:X?}", op_code));
