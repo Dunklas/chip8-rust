@@ -11,8 +11,9 @@ extern crate piston;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::{EventSettings, Events};
-use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
+use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent, Key};
 use piston::window::WindowSettings;
+use piston::input::*;
 
 struct Game {
     gl: GlGraphics,
@@ -47,6 +48,70 @@ impl Game {
     }
     fn update(&mut self, args: &UpdateArgs) {
         self.chip8.emulate_cycle();
+    }
+
+    fn key_pressed(&mut self, key: Key) {
+        Game::update_keys(key, 1, &mut self.chip8.keys);
+    }
+
+    fn key_released(&mut self, key: Key) {
+        Game::update_keys(key, 0, &mut self.chip8.keys);
+    }
+
+    fn update_keys(key: Key, state: u8, keys: &mut [u8; 16]) {
+        match key {
+            Key::D1 => {
+                keys[0x1] = state;
+            },
+            Key::D2 => {
+                keys[0x2] = state;
+            },
+            Key::D3 => {
+                keys[0x3] = state;
+            },
+            Key::D4 => {
+                keys[0xC] = state;
+            },
+            Key::Q => {
+                keys[0x4] = state;
+            },
+            Key::W => {
+                keys[0x5] = state;
+            },
+            Key::E => {
+                keys[0x6] = state;
+            },
+            Key::R => {
+                keys[0xD] = state;
+            }
+            Key::A => {
+                keys[0x7] = state;
+            },
+            Key::S => {
+                keys[0x8] = state;
+            },
+            Key::D => {
+                keys[0x9] = state;
+            },
+            Key::F => {
+                keys[0xE] = state;
+            },
+            Key::Z => {
+                keys[0xA] = state;
+            },
+            Key::X => {
+                keys[0x0] = state;
+            },
+            Key::C => {
+                keys[0xB] = state;
+            },
+            Key::V => {
+                keys[0xF] = state;
+            },
+            _ => {
+                // Do nothing
+            }
+        }
     }
 }
 
@@ -83,6 +148,21 @@ fn main() {
 
         if let Some(args) = e.update_args() {
             game.update(&args);
+        }
+
+        if let Some(Button::Keyboard(key)) = e.press_args() {
+            game.key_pressed(key);
+        }
+
+        if let Some(button) = e.release_args() {
+            match button {
+                Button::Keyboard(key) => {
+                    game.key_released(key);
+                },
+                _ => {
+                    // Do nothing
+                }
+            }
         }
     }
 }

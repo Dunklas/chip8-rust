@@ -12,16 +12,12 @@ pub fn new(rom_bytes: &[u8]) -> Chip8 {
         sound_timer: 0,
         stack: [0; 16],
         stack_pointer: 0,
-        key: [0; 16],
+        keys: [0; 16],
         draw: false
     };
 
     let font_set = font_set();
     for (i, _byte) in font_set.iter().enumerate() {
-        // if i % 5 == 0 {
-        //     print!("\n");
-        // }
-        // println!("{:#010b}", font_set[i]);
         chip8.memory[i] = font_set[i];
     }
 
@@ -64,7 +60,7 @@ pub struct Chip8 {
     sound_timer: u8,
     stack: [u16; 16],
     stack_pointer: u16,
-    key: [u8; 16],
+    pub keys: [u8; 16],
     pub draw: bool
 }
 
@@ -267,7 +263,7 @@ impl Chip8 {
                 match op_code & 0x00FF {
                     0x009E => {
                         Chip8::print_debug(&format!("0xEX9E: Skips the next instruction if the key stored in VX is pressed"));
-                        if self.key[self.v[((op_code & 0x0F00) >> 8) as usize] as usize] != 0 {
+                        if self.keys[self.v[((op_code & 0x0F00) >> 8) as usize] as usize] != 0 {
                             self.program_counter += 4;
                         } else {
                             self.program_counter += 2;
@@ -275,7 +271,7 @@ impl Chip8 {
                     },
                     0x00A1 => {
                         Chip8::print_debug(&format!("0xEXA1: Skips the next instruction if the key stored in VX isn't pressed"));
-                        if self.key[self.v[((op_code & 0x0F00) >> 8) as usize] as usize] == 0 {
+                        if self.keys[self.v[((op_code & 0x0F00) >> 8) as usize] as usize] == 0 {
                             self.program_counter += 4;
                         } else {
                             self.program_counter += 2;
@@ -378,7 +374,7 @@ impl Chip8 {
     }
 
     fn print_debug(msg: &String) {
-        let debug = true;
+        let debug = false;
         if debug {
             println!("{}", msg);
         }
