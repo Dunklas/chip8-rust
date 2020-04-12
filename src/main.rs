@@ -47,14 +47,19 @@ impl Game {
         }
     }
     fn update(&mut self, args: &UpdateArgs) {
+        if self.chip8.wait_keys {
+            return;
+        }
         self.chip8.emulate_cycle();
     }
 
     fn key_pressed(&mut self, key: Key) {
+        self.chip8.wait_keys = false;
         Game::update_keys(key, 1, &mut self.chip8.keys);
     }
 
     fn key_released(&mut self, key: Key) {
+        self.chip8.wait_keys = false;
         Game::update_keys(key, 0, &mut self.chip8.keys);
     }
 

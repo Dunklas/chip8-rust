@@ -13,6 +13,7 @@ pub fn new(rom_bytes: &[u8]) -> Chip8 {
         stack: [0; 16],
         stack_pointer: 0,
         keys: [0; 16],
+        wait_keys: false,
         draw: false
     };
 
@@ -61,6 +62,7 @@ pub struct Chip8 {
     stack: [u16; 16],
     stack_pointer: u16,
     pub keys: [u8; 16],
+    pub wait_keys: bool,
     pub draw: bool
 }
 
@@ -289,10 +291,20 @@ impl Chip8 {
                         Chip8::print_debug(&format!("0xFX07: Sets VX to the value of the delay timer"));
                         self.v[((op_code & 0x0F00) >> 8) as usize] = self.delay_timer;
                         self.program_counter += 2;
+                    },
+                    0x000A => {
+                        Chip8::print_debug(&format!("0xFX0A: A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)"));
+                        self.wait_keys = true;
+                        self.program_counter += 2;
                     }
                     0x0015 => {
                         Chip8::print_debug(&format!("0xFX15: Sets the delay timer to VX"));
                         self.delay_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
+                        self.program_counter += 2;
+                    },
+                    0x0018 => {
+                        Chip8::print_debug(&format!("0xFX18: Sets the sound timer to VX"));
+                        self.sound_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
                         self.program_counter += 2;
                     },
                     0x001E => {
@@ -305,11 +317,6 @@ impl Chip8 {
                         self.index += self.v[((op_code & 0x0F00) >> 8) as usize] as u16;
                         self.program_counter += 2;
                     },
-                    0x0018 => {
-                        Chip8::print_debug(&format!("0xFX18: Sets the sound timer to VX"));
-                        self.sound_timer = self.v[((op_code & 0x0F00) >> 8) as usize];
-                        self.program_counter += 2;
-                    }
                     0x0029 => {
                         Chip8::print_debug(&format!("0xFX29: Sets I to the location of the sprite for the character in VX"));
                         let character = self.v[((op_code & 0x0F00) >> 8) as usize];
@@ -374,7 +381,7 @@ impl Chip8 {
     }
 
     fn print_debug(msg: &String) {
-        let debug = false;
+        let debug = true;
         if debug {
             println!("{}", msg);
         }
