@@ -335,8 +335,6 @@ impl Chip8 {
                         for i in 0x0..(((op_code & 0x0F00) >> 8) + 1) {
                             self.memory[(self.index + i) as usize] = self.v[i as usize];
                         }
-                        // Only on original interpreter
-                        // self.index += ((op_code & 0x0F00) >> 8) + 1;
                         self.program_counter += 2;
                     }
                     0x0065 => {
@@ -344,8 +342,6 @@ impl Chip8 {
                         for i in 0x0..(((op_code & 0x0F00) >> 8) + 1) {
                             self.v[i as usize] = self.memory[(self.index + i) as usize];
                         }
-                        // Only on original interpreter
-                        // self.index += ((op_code & 0x0F00) >> 8) + 1;
                         self.program_counter += 2;
                     }
                     _ => {
