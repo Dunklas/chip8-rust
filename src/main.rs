@@ -145,7 +145,15 @@ fn main() {
         chip8: chip8,
     };
 
-    let mut events = Events::new(EventSettings::new());
+    let event_settings = EventSettings{
+        max_fps: 500,
+        ups: 500,
+        ups_reset: 5,
+        swap_buffers: true,
+        bench_mode: false,
+        lazy: false,
+    };
+    let mut events = Events::new(event_settings);
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
             game.render(&args);
