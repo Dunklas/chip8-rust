@@ -5,5 +5,4 @@
   - Run:
     - `cargo run ROM-FILENAME`
 
-![alt text][logo]
-[chip8]: https://github.com/Dunklas/chip8-rust/blob/master/spaceinvaders.png "Space Invaders running on the interpreter"
+![alt text](https://github.com/Dunklas/chip8-rust/blob/master/spaceinvaders.png "Space Invaders running on the interpreter")
