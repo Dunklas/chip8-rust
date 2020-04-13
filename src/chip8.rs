@@ -70,6 +70,17 @@ impl Chip8 {
 
     pub fn emulate_cycle(&mut self) {
         self.fetch_opcode();
+        self.execute_opcode();
+        self.update_timers();
+    }
+
+    fn fetch_opcode(&mut self) {
+        let first_byte = self.memory[self.program_counter as usize];
+        let second_byte = self.memory[self.program_counter as usize + 1];
+        self.op_code = (first_byte as u16) << 8 | second_byte as u16;
+    }
+
+    fn execute_opcode(&mut self) {
         let op_code = self.op_code;
         Chip8::print_debug(&format!("OP: {:#06x}", self.op_code));
         match self.op_code & 0xF000 {
@@ -355,13 +366,6 @@ impl Chip8 {
                 return;
             }
         }
-        self.update_timers();
-    }
-
-    fn fetch_opcode(&mut self) {
-        let first_byte = self.memory[self.program_counter as usize];
-        let second_byte = self.memory[self.program_counter as usize + 1];
-        self.op_code = (first_byte as u16) << 8 | second_byte as u16;
     }
 
     fn update_timers(&mut self) {
